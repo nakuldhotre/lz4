@@ -133,12 +133,22 @@
 **************************************/
 #define STEPSIZE sizeof(size_t)
 
-static unsigned LZ4_64bits(void) { return sizeof(void*)==8; }
+static unsigned LZ4_64bits(void) { 
+#ifdef __x86_64__
+   return __x86_64__;
+#else
+   return sizeof(void*)==8;
+#endif
+}
 
 static unsigned LZ4_isLittleEndian(void)
 {
+#if defined(__BYTE_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__)
+   return (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__);
+#else
     const union { U32 i; BYTE c[4]; } one = { 1 };   /* don't use static : performance detrimental  */
     return one.c[0];
+#endif
 }
 
 
